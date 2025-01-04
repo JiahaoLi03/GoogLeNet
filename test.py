@@ -59,7 +59,7 @@ def test_model_process(model, test_dataloader):
 
 if __name__ == '__main__':
 
-    GoogLeNet = GoogLeNet()
+    GoogLeNet = GoogLeNet(Inception)
 
     GoogLeNet.load_state_dict(torch.load('best_model.pth'))
 
