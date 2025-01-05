@@ -1,15 +1,21 @@
 import torch
 import torch.utils.data as Data
 from torchvision import transforms
-from torchvision.datasets import FashionMNIST
-from model import GoogLeNet, Inception
+from torchvision.datasets import ImageFolder
+from cat_dog_classification.cat_dog_model import GoogLeNet, Inception
 
 
 def test_data_process():
-    test_data = FashionMNIST(root='./data',
-                             train=False,
-                             transform=transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()]),
-                             download=True)
+    # 数据集路径
+    test_data_path = r'D:\PytorchProject\GoogLeNet\cat_dog_classification\dataset\test'
+
+    normalize = transforms.Normalize(mean=[0.162, 0.151, 0.138], std=[0.058, 0.052, 0.048])
+
+    # 数据集预处理组合
+    test_transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), normalize])
+
+    # 加载数据集
+    test_data = ImageFolder(test_data_path, transform=test_transform)
 
     test_dataloader = Data.DataLoader(dataset=test_data,
                                       batch_size=1,
@@ -28,8 +34,7 @@ def test_model_process(model, test_dataloader):
     test_correct = 0
     test_num = 0
 
-    # 类别 FashionMNIST 数据中每个类别的标签
-    classes = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+    classes = ['猫', '狗']
 
     with torch.no_grad():
         for test_data_x, test_data_y in test_dataloader:

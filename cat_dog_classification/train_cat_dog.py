@@ -5,16 +5,22 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import torch.utils.data as Data
-from model import GoogLeNet, Inception
-from torchvision.datasets import FashionMNIST
+from cat_dog_classification.cat_dog_model import GoogLeNet, Inception
 from torchvision import transforms
+from torchvision.datasets import ImageFolder
 
 
 def train_val_data_process():
-    train_data = FashionMNIST(root='./data',
-                              train=True,
-                              transform=transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()]),
-                              download=True)
+    train_data_path = r'D:\PytorchProject\GoogLeNet\cat_dog_classification\dataset\train'
+
+    normalize = transforms.Normalize(mean=[0.162, 0.151, 0.138], std=[0.058, 0.052, 0.048])
+
+    # 数据集预处理组合
+    train_transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor(), normalize])
+
+    # 加载数据集
+    train_data = ImageFolder(train_data_path, transform=train_transform)
+    # print(train_data.class_to_idx)
 
     train_data, val_data = Data.random_split(train_data, [round(0.8 * len(train_data)), round(0.2 * len(train_data))])
 
@@ -128,7 +134,7 @@ def train_model_process(model, train_dataloader, val_dataloader, num_epochs):
         print("训练和验证耗费的时间{:.0f}m{:.0f}s".format(time_used // 60, time_used % 60))
 
     model.load_state_dict(best_model_wts)
-    torch.save(best_model_wts, "/best_model.pth")
+    torch.save(best_model_wts, r"D:\PytorchProject\GoogLeNet\cat_dog_classification\best_model.pth")
 
     train_process = pd.DataFrame(data={"epoch": range(num_epochs),
                                        "train_loss_all": train_loss_all,
@@ -162,7 +168,7 @@ if __name__ == '__main__':
 
     train_dataloader, val_dataloader = train_val_data_process()
 
-    train_process = train_model_process(GoogLeNet, train_dataloader, val_dataloader, num_epochs=20)
+    train_process = train_model_process(GoogLeNet, train_dataloader, val_dataloader, num_epochs=50)
 
     matplot_acc_loss(train_process)
 
