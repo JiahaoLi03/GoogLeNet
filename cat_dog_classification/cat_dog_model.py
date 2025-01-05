@@ -72,7 +72,7 @@ class GoogLeNet(nn.Module):
             Inception(in_channels=832, c1=384, c2=(192, 384), c3=(48, 128), c4=128),
             nn.AdaptiveAvgPool2d((1,1)),  # 全局平均池化
             nn.Flatten(),
-            nn.Linear(in_features=1024, out_features=2),
+            nn.Linear(in_features=1024, out_features=2)
         )
 
         # 权重初始化
